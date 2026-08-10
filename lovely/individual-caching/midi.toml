@@ -1,0 +1,27 @@
+[manifest]
+dump_lua = true
+priority = 0
+version = "1.0.0"
+
+# Midi cache ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''if not cs.midiFiles[event.filename] then'''
+payload = '''
+local QP_filePath = cLevel .. event.filename
+local QP_modtime = quickPlaytest.getModtime("midi", QP_filePath)
+if not cs.midiFiles[event.filename] or not quickPlaytest.fileLoaded("midi", QP_filePath, QP_modtime) then
+'''
+position = "at"
+target = "levelformat/events/Advanced/playMidi.lua"
+times = 1
+
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''cs.midiFiles[event.filename] = dpf.loadJson(cLevel .. event.filename)'''
+payload = '''quickPlaytest.loadFile("midi", QP_filePath, QP_modtime)'''
+position = "after"
+target = "levelformat/events/Advanced/playMidi.lua"
+times = 1

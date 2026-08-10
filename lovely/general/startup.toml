@@ -1,0 +1,21 @@
+[manifest]
+dump_lua = true
+priority = 0
+version = "1.0.0"
+
+# Utilitools requirement ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''cs = bs.load(project.initState)'''
+payload = '''
+if mods.utilitools == nil then
+	local buttonPressed = love.window.showMessageBox("Quick Playtest", "Quick Playtest requires Utilitools. Please install that mod.", { "Ok", "No" })
+	if buttonPressed == 2 then error("Quick Playtest: This is what you get for not installing Utilitools even though this mod needs it") end
+	love.quit()
+	error("Quick Playtest: Failed to quit game.")
+end
+'''
+position = "after"
+target = "main.lua"
+times = 1

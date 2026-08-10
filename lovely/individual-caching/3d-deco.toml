@@ -1,0 +1,50 @@
+[manifest]
+dump_lua = true
+priority = 0
+version = "1.0.0"
+
+# Texture cache ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''if not cs.vfx.textures[event.texture] then'''
+payload = '''
+local QP_filePath = path .. sprField
+local QP_modtime = quickPlaytest.getModtime("texture3d", QP_filePath)
+if not cs.vfx.textures[event.texture] or not quickPlaytest.fileLoaded("texture3d", QP_filePath, QP_modtime) then
+'''
+position = "at"
+target = "levelformat/events/Vfx/Deco/deco3d.lua"
+times = 1
+
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''cs.vfx.textures[event.texture] = love.graphics.newImage(fpath)'''
+payload = '''quickPlaytest.loadFile("texture3d", QP_filePath, QP_modtime)'''
+position = "after"
+target = "levelformat/events/Vfx/Deco/deco3d.lua"
+times = 1
+
+# Model cache ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''if not cs.vfx.models[event.model] then'''
+payload = '''
+local QP_filePath = path .. sprField
+local QP_modtime = quickPlaytest.getModtime("deco3d", QP_filePath)
+if not cs.vfx.models[event.model] or not quickPlaytest.fileLoaded("deco3d", QP_filePath, QP_modtime) then
+'''
+position = "at"
+target = "levelformat/events/Vfx/Deco/deco3d.lua"
+times = 1
+
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''cs.vfx.models[event.model] = g3d.newModel(fpath,tex,{0,1,0},nil,1)'''
+payload = '''quickPlaytest.loadFile("deco3d", QP_filePath, QP_modtime)'''
+position = "after"
+target = "levelformat/events/Vfx/Deco/deco3d.lua"
+times = 1

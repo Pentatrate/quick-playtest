@@ -1,0 +1,33 @@
+{
+	"dependencies": {
+		"utilitools": {
+			"versions": [
+				[
+					">=",
+					"1.2.55"
+				]
+			],
+			"reason": "Required API. You may need to update this mod."
+		}
+	},
+	"incompatibilities": {
+	},
+	"files": {
+		"quickPlaytest": {
+			"extension": "lua",
+			"load": true,
+			"call": true
+		},
+		"config": {
+			"extension": "lua",
+			"load": true
+		},
+		"configOptions": {
+			"extension": "lua",
+			"load": true,
+			"call": true
+		}
+	},
+	"config": true,
+	"cullConfig": true
+}

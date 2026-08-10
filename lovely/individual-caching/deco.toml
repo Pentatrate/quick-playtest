@@ -1,0 +1,27 @@
+[manifest]
+dump_lua = true
+priority = 0
+version = "1.0.0"
+
+# Deco cache ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''if not cs.vfx.decoSprites[event.sprite] then'''
+payload = '''
+local QP_filePath = cLevel .. event.sprite
+local QP_modtime = quickPlaytest.getModtime("deco", QP_filePath)
+if not cs.vfx.decoSprites[event.sprite] or not quickPlaytest.fileLoaded("deco", QP_filePath, QP_modtime) then
+'''
+position = "at"
+target = "levelformat/events/Vfx/Deco/deco.lua"
+times = 1
+
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''cs.vfx.decoSprites[event.sprite] = love.graphics.newImage(fpath)'''
+payload = '''quickPlaytest.loadFile("deco", QP_filePath, QP_modtime)'''
+position = "after"
+target = "levelformat/events/Vfx/Deco/deco.lua"
+times = 1

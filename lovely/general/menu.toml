@@ -1,0 +1,63 @@
+[manifest]
+dump_lua = true
+priority = 0
+version = "1.0.0"
+
+# Menu in editor ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''if self.goToBeatDialogue then'''
+payload = '''
+if mods["quick-playtest"].config.editorMenu then
+	helpers.SetNextWindowPos(750, 420, window_flag)
+	helpers.SetNextWindowSize(200, 300, window_flag)
+	mods["quick-playtest"].config.editorMenu = imgui.Begin("Quick Playtest", mods["quick-playtest"].config.editorMenu or nil, (inputFlag or 0) + (mods.beattools.config.stopImGuiMove and imgui.ImGuiWindowFlags_NoMove or 0) + (mods.beattools.config.stopImGuiResize and imgui.ImGuiWindowFlags_NoResize or 0))
+
+	if utilitools.files["quick-playtest"].config then utilitools.files["quick-playtest"].config() end
+
+	local configHelpers = utilitools.configHelpers
+	configHelpers.setMod(mods["quick-playtest"])
+
+	configHelpers.treeNode("Clear Caches", function()
+		imgui.Text("Manually clear data cache")
+		imgui.SameLine()
+		helpers.imguiHelpMarker("Useful when \"Detect Changes\" is off or when encountering bugs")
+		if imgui.Button("Clear all caches") then
+			quickPlaytest.clearCache()
+		end
+		if imgui.Button("Clear deco cache") then
+			quickPlaytest.clearCache("deco")
+			quickPlaytest.clearCache("decoSheet")
+			quickPlaytest.clearCache("decoJson")
+		end
+		if imgui.Button("Clear tag cache") then
+			quickPlaytest.clearCache("tag")
+		end
+		if imgui.Button("Clear 3d deco cache") then
+			quickPlaytest.clearCache("tagtexture3d")
+			quickPlaytest.clearCache("deco3d")
+		end
+		if imgui.Button("Clear shader cache") then
+			quickPlaytest.clearCache("shader")
+		end
+		if imgui.Button("Clear font cache") then
+			quickPlaytest.clearCache("font")
+		end
+		if imgui.Button("Clear sound cache") then
+			quickPlaytest.clearCache("sound")
+		end
+		if imgui.Button("Clear midi cache") then
+			quickPlaytest.clearCache("midi")
+		end
+		if imgui.Button("Clear face sprites cache") then
+			quickPlaytest.clearCache("facesprite")
+		end
+	end)
+
+	imgui.End()
+end
+'''
+position = "before"
+target = "states/Editor.lua"
+times = 1

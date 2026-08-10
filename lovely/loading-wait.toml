@@ -1,0 +1,21 @@
+[manifest]
+dump_lua = true
+priority = 0
+version = "1.0.0"
+
+# Run scheduled events ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''rw:play(cs.cBeat)'''
+payload = '''
+for i,v in ipairs(cs.playEvents) do -- onOffset + onBeat pass
+	self:checkEvent(v,'onOffset')
+	self:checkEvent(v,'onBeat')
+end
+self:runQueuedEvents()
+
+'''
+position = "before"
+target = "obj/GameManager.lua"
+times = 1

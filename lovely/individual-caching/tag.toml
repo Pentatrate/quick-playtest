@@ -1,0 +1,27 @@
+[manifest]
+dump_lua = true
+priority = 0
+version = "1.0.0"
+
+# Tag cache ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''if not cs.tags[event.tag] then'''
+payload = '''
+local QP_filePath = cLevel .. "tags/" .. event.tag .. ".json"
+local QP_modtime = quickPlaytest.getModtime("tag", QP_filePath)
+if not cs.tags[event.tag] or not quickPlaytest.fileLoaded("tag", QP_filePath, QP_modtime) then
+'''
+position = "at"
+target = "levelformat/events/Editor/tag.lua"
+times = 1
+
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''cs.tags[event.tag] = dpf.loadJson(cLevel .. "tags/" .. event.tag..'.json')'''
+payload = '''quickPlaytest.loadFile("tag", QP_filePath, QP_modtime)'''
+position = "after"
+target = "levelformat/events/Editor/tag.lua"
+times = 1

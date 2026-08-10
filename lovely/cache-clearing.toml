@@ -1,0 +1,63 @@
+[manifest]
+dump_lua = true
+priority = 0
+version = "1.0.0"
+
+# deco and tag cache ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''
+cs.vfx.decoSprites = {}
+cs.vfx.decoTemplates = {}
+'''
+payload = '''
+cs.vfx.decoSprites, cs.vfx.decoTemplates, cs.tags, cs.vfx.textures, cs.vfx.models, cs.customFonts, cs.soundEffects, cs.midiFiles, cs.p.spr = quickPlaytest.loadCache()
+'''
+position = "at"
+target = "obj/GameManager.lua"
+times = 1
+
+# Removing other initialization code ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''cs.tags = {}'''
+payload = '''''' # Penta: There can only be one    # Kakadu: This post was fact checked by real Beatblock patriots.
+position = "at"
+target = "obj/GameManager.lua"
+times = 1
+
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''
+cs.vfx.textures = {}
+cs.vfx.models = {}
+'''
+payload = ''''''
+position = "at"
+target = "obj/GameManager.lua"
+times = 1
+
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''cs.midiFiles = {}'''
+payload = ''''''
+position = "at"
+target = "obj/GameManager.lua"
+times = 1
+
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''
+cs.soundEffects = {}
+
+cs.customFonts = {}
+'''
+payload = ''''''
+position = "at"
+target = "obj/GameManager.lua"
+times = 1

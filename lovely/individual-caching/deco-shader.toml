@@ -1,0 +1,32 @@
+[manifest]
+dump_lua = true
+priority = 0
+version = "1.0.0"
+
+# Shader cache ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''if event.file then'''
+payload = '''
+local QP_filePath = cLevel .. event.file
+local QP_modtime = quickPlaytest.getModtime("shader", QP_filePath)
+if event.file and not (not quickPlaytest.cache.shaders[QP_filePath] or not quickPlaytest.fileLoaded("shader", QP_filePath, QP_modtime)) then
+	fullCode = quickPlaytest.cache.shaders[QP_filePath]
+elseif event.file then
+'''
+position = "at"
+target = "levelformat/events/Vfx/Deco/decoShader.lua"
+times = 1
+
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''fullCode = love.filesystem.read(filename)'''
+payload = '''
+quickPlaytest.loadFile("shader", QP_filePath, QP_modtime)
+quickPlaytest.cache.shaders[QP_filePath] = fullCode
+'''
+position = "after"
+target = "levelformat/events/Vfx/Deco/decoShader.lua"
+times = 1

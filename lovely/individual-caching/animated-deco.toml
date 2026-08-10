@@ -1,0 +1,32 @@
+[manifest]
+dump_lua = true
+priority = 0
+version = "1.0.0"
+
+# Animated deco cache ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''if not cs.vfx.decoTemplates[template] then'''
+payload = '''
+local QP_filePath1 = cLevel .. template .. ".png"
+local QP_filePath2 = cLevel .. template .. ".json"
+local QP_modtime1 = quickPlaytest.getModtime("decoSheet", QP_filePath1)
+local QP_modtime2 = quickPlaytest.getModtime("decoJson", QP_filePath2)
+if not cs.vfx.decoTemplates[template] or not quickPlaytest.fileLoaded("decoSheet", QP_filePath1, QP_modtime1) or not quickPlaytest.fileLoaded("decoJson", QP_filePath2, QP_modtime2) then
+'''
+position = "at"
+target = "levelformat/events/Vfx/Deco/deco.lua"
+times = 1
+
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''cs.vfx.decoTemplates[template] = ez.newjson(fpath)'''
+payload = '''
+quickPlaytest.loadFile("decoSheet", QP_filePath1, QP_modtime1)
+quickPlaytest.loadFile("decoJson", QP_filePath2, QP_modtime2)
+'''
+position = "after"
+target = "levelformat/events/Vfx/Deco/deco.lua"
+times = 1

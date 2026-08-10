@@ -1,0 +1,27 @@
+[manifest]
+dump_lua = true
+priority = 0
+version = "1.0.0"
+
+# Face sprite cache ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''if not cs.p.spr[event.spriteName] then'''
+payload = '''
+local QP_filePath = cLevel .. event.spriteName
+local QP_modtime = quickPlaytest.getModtime("facesprite", QP_filePath)
+if not cs.p.spr[event.spriteName] or not quickPlaytest.fileLoaded("facesprite", QP_filePath, QP_modtime) then
+'''
+position = "at"
+target = "levelformat/events/Vfx/forcePlayerSprite.lua"
+times = 1
+
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''cs.p.spr[event.spriteName] = love.graphics.newImage(filename)'''
+payload = '''quickPlaytest.loadFile("facesprite", QP_filePath, QP_modtime)'''
+position = "after"
+target = "levelformat/events/Vfx/forcePlayerSprite.lua"
+times = 1

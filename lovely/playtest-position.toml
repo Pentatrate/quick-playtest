@@ -1,0 +1,12 @@
+[manifest]
+dump_lua = true
+priority = 10 # Made priority to be after "Bookmark Playtest" v1.0.0 by Whenpigfly for compat
+version = "1.0.0"
+
+# Playtest position ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+[[patches]]
+[patches.regex]
+pattern = '''(?<statement>self\.startBeat = [\s\S]+? \+ self\.offset)( - 1)?''' # Penta: Using RegEx to support "Bookmark Playtest" v1.0.0 by Whenpigfly
+payload = '''$statement - mods["quick-playtest"].config.playOffset''' # Penta: self.offset is by default the 8 beats that notes spawn away from the player
+position = "at"
+target = "states/Editor.lua"
