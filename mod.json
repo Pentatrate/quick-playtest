@@ -1,8 +1,8 @@
 {
+	"id": "quick-playtest",
+	"name": "Quick Playtest",
 	"author": "Pentatrate, Kakadu",
 	"description": "Reduces loading time on consecutive playtests in the editor, by reusing unchanged data from the previous playtest.\nAlso reduces time when playing the same level again",
-	"name": "Quick Playtest",
-	"config": {},
-	"id": "quick-playtest",
-	"version": "3.0.0"
+	"version": "3.0.1",
+	"config": {}
 }
