@@ -34,10 +34,10 @@ times = 1
 [[patches]]
 [patches.pattern]
 match_indent = true
-pattern = '''if not pcall(function() cs.customFonts[fontName] = love.graphics.newFont(filename, event.ttfFontSize,'mono') cs.customFonts[fontName]:setFilter("nearest", "nearest", 1) end) then'''
+pattern = '''if not pcall(function() cs.customFonts[fontName] = love.graphics.newFont(filename, event.ttfFontSize or 12,'mono') cs.customFonts[fontName]:setFilter("nearest", "nearest", 1) end) then'''
 payload = '''
 if not pcall(function()
-	cs.customFonts[fontName] = love.graphics.newFont(filename, event.ttfFontSize,'mono')
+	cs.customFonts[fontName] = love.graphics.newFont(filename, event.ttfFontSize or 12,'mono')
 	cs.customFonts[fontName]:setFilter("nearest", "nearest", 1)
 	quickPlaytest.loadFile("font", QP_filePath, QP_modtime)
 end) then
