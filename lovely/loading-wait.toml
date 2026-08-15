@@ -9,13 +9,72 @@ version = "1.0.0"
 match_indent = true
 pattern = '''rw:play(cs.cBeat)'''
 payload = '''
-for i,v in ipairs(cs.playEvents) do -- onOffset + onBeat pass
-	self:checkEvent(v,'onOffset')
-	self:checkEvent(v,'onBeat')
+if not cs.playEventsSorted then self:sortPlayEvents() end
+
+while cs.playEventsOffsetIdx <= #cs.playEvents do
+	local v = cs.playEvents[cs.playEventsOffsetIdx]
+	local szBefore = #cs.eventQueue
+	self:checkEvent(v, 'onOffset')
+	local played = v['play_onOffset'] or (#cs.eventQueue > szBefore) or not Event.onOffset[v.type]
+	if not played then break end
+	cs.playEventsOffsetIdx = cs.playEventsOffsetIdx + 1
+end
+
+while cs.playEventsBeatIdx <= #cs.playEvents do
+	local v = cs.playEvents[cs.playEventsBeatIdx]
+	local szBefore = #cs.eventQueue
+	self:checkEvent(v, 'onBeat')
+	local played = v['play_onBeat'] or (#cs.eventQueue > szBefore) or not Event.onBeat[v.type]
+	if not played then break end
+	cs.playEventsBeatIdx = cs.playEventsBeatIdx + 1
 end
 self:runQueuedEvents()
 
 '''
 position = "before"
 target = "obj/GameManager.lua"
+times = 1
+
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''error('not enough points!')'''
+payload = '''
+local segments = self.segments
+if segments == nil then
+	segments = math.floor(math.abs(self.drawAngle2 - self.drawAngle) + 12)
+end
+if math.floor(cs.vfx.holdSegmentLimit) >= 1 then
+	segments = math.min(math.floor(cs.vfx.holdSegmentLimit),segments)
+end
+modwarn(mods["quick-playtest"], "points", points, "segments", segments, "drawAngle", self.drawAngle, "angle", self.angle, type(self.angle), (self.hb - cs.cBeat) > 0, "progress", self.progress)
+'''
+position = "at"
+target = "obj/notes/Hold.lua"
+times = 1
+
+# [[patches]]
+# [patches.pattern]
+# match_indent = true
+# pattern = '''self:updateAngle()'''
+# payload = '''
+# modlog(mods["quick-playtest"], "anglebefore", self.angle)
+# self:updateAngle()
+# modlog(mods["quick-playtest"], "angleafter", self.angle)
+# '''
+# position = "at"
+# target = "obj/notes/MineHold.lua"
+# times = 1
+
+[[patches]]
+[patches.pattern]
+match_indent = true
+pattern = '''self.progress = 1 - ((self.hb - cs.cBeat) / self.moveTime)'''
+payload = '''
+if self.moveTime == 0 then -- penta: hold quick playtest crash fix
+	self.progress = 1
+end
+'''
+position = "after"
+target = "obj/notes/Block.lua"
 times = 1
