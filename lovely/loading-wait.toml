@@ -9,24 +9,31 @@ version = "1.0.0"
 match_indent = true
 pattern = '''rw:play(cs.cBeat)'''
 payload = '''
-if not cs.playEventsSorted then self:sortPlayEvents() end
+if mods.beaver and mods.beaver.enabled and self.sortPlayEvents then
+	if not cs.playEventsSorted then self:sortPlayEvents() end
 
-while cs.playEventsOffsetIdx <= #cs.playEvents do
-	local v = cs.playEvents[cs.playEventsOffsetIdx]
-	local szBefore = #cs.eventQueue
-	self:checkEvent(v, 'onOffset')
-	local played = v['play_onOffset'] or (#cs.eventQueue > szBefore) or not Event.onOffset[v.type]
-	if not played then break end
-	cs.playEventsOffsetIdx = cs.playEventsOffsetIdx + 1
-end
+	while cs.playEventsOffsetIdx <= #cs.playEvents do
+		local v = cs.playEvents[cs.playEventsOffsetIdx]
+		local szBefore = #cs.eventQueue
+		self:checkEvent(v, 'onOffset')
+		local played = v['play_onOffset'] or (#cs.eventQueue > szBefore) or not Event.onOffset[v.type]
+		if not played then break end
+		cs.playEventsOffsetIdx = cs.playEventsOffsetIdx + 1
+	end
 
-while cs.playEventsBeatIdx <= #cs.playEvents do
-	local v = cs.playEvents[cs.playEventsBeatIdx]
-	local szBefore = #cs.eventQueue
-	self:checkEvent(v, 'onBeat')
-	local played = v['play_onBeat'] or (#cs.eventQueue > szBefore) or not Event.onBeat[v.type]
-	if not played then break end
-	cs.playEventsBeatIdx = cs.playEventsBeatIdx + 1
+	while cs.playEventsBeatIdx <= #cs.playEvents do
+		local v = cs.playEvents[cs.playEventsBeatIdx]
+		local szBefore = #cs.eventQueue
+		self:checkEvent(v, 'onBeat')
+		local played = v['play_onBeat'] or (#cs.eventQueue > szBefore) or not Event.onBeat[v.type]
+		if not played then break end
+		cs.playEventsBeatIdx = cs.playEventsBeatIdx + 1
+	end
+else
+	for i,v in ipairs(cs.playEvents) do -- onOffset + onBeat pass
+		self:checkEvent(v,'onOffset')
+		self:checkEvent(v,'onBeat')
+	end
 end
 self:runQueuedEvents()
 
